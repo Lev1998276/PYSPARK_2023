@@ -1,0 +1,26 @@
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col, avg, sum, max, min
+
+# Create a Spark session
+spark = SparkSession.builder.appName("agg_example").getOrCreate()
+
+# Assuming you have a DataFrame named df
+data = [("HR", 50000),
+        ("Engineering", 60000),
+        ("HR", 55000),
+        ("Engineering", 70000),
+        ("Finance", 60000)]
+
+columns = ["department", "salary"]
+df = spark.createDataFrame(data, columns)
+
+df.show()
+
+# Example 1: Using variables to store column references
+avg_salary_col = avg(col("salary")).alias("avg_salary")
+sum_salary_col = sum(col("salary")).alias("total_salary")
+max_salary_col = max(col("salary")).alias("max_salary")
+min_salary_col = min(col("salary")).alias("min_salary")
+
+result_df = df.groupBy("department").agg(avg_salary_col, sum_salary_col,max_salary_col, min_salary_col )
+result_df.show()
