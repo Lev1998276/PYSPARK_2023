@@ -1,0 +1,8 @@
+# Example 2: Using variables with conditions
+condition1 = col("salary") > 55000
+condition2 = col("salary") <= 70000
+
+avg_high_salary_col = avg(col("salary")).alias("avg_high_salary")
+
+result_df = df.filter(condition1 & condition2).groupBy("department").agg(avg_high_salary_col)
+result_df.show()
