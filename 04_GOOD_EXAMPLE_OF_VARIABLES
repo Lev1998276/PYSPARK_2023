@@ -1,0 +1,33 @@
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col, count, sum, when
+
+# Create a Spark session
+spark = SparkSession.builder.appName("AggregateFunctionsWithVariables").getOrCreate()
+
+# Create a DataFrame
+data = [("Alice", "Yes", 25),
+        ("Bob", "No", 30),
+        ("Charlie", "Yes", 22),
+        ("Alice", "No", 28),
+        ("Bob", "Yes", 35)]
+columns = ["Name", "Has_Salary", "Salary"]
+
+df = spark.createDataFrame(data, columns)
+
+# Define variables for conditional aggregation
+has_salary_condition = col("Has_Salary") == "Yes"
+above_30_condition = col("Salary") > 30
+
+# Use conditional aggregation with variables
+result_df = (
+    df
+    .groupBy("Name")
+    .agg(
+        count("*").alias("Total_Count"),
+        sum(when(has_salary_condition & above_30_condition, 1).otherwise(0)).alias("High_Salary_Count")
+    )
+)
+
+# Show the result
+result_df.show()
+
