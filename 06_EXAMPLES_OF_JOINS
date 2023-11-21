@@ -1,0 +1,55 @@
+from pyspark.sql import SparkSession
+
+# Create a Spark session
+spark = SparkSession.builder.appName("JoinExamples").getOrCreate()
+
+# Create two DataFrames
+data1 = [("Alice", 1, "USA"), ("Bob", 2, "UK"), ("Charlie", 3, "France")]
+columns1 = ["name", "id", "country"]
+df1 = spark.createDataFrame(data1, columns1)
+
+data2 = [("1", "New York"), ("2", "London"), ("3", "Paris")]
+columns2 = ["id", "city"]
+df2 = spark.createDataFrame(data2, columns2)
+
+# Inner Join
+result_inner = df1.join(df2, df1["id"] == df2["id"], "inner")
+
+# Left Join
+result_left = df1.join(df2, df1["id"] == df2["id"], "left")
+
+# Right Join
+result_right = df1.join(df2, df1["id"] == df2["id"], "right")
+
+# Outer Join (Full Outer Join)
+result_outer = df1.join(df2, df1["id"] == df2["id"], "outer")
+
+# Left Semi Join
+result_semi = df1.join(df2, df1["id"] == df2["id"], "left_semi")
+
+# Left Anti Join
+result_anti = df1.join(df2, df1["id"] == df2["id"], "left_anti")
+
+# Cross Join
+result_cross = df1.crossJoin(df2)
+
+# Complex Join Conditions
+result_complex = df1.join(df2, (df1["id"] == df2["id"]) & (df1["country"] == "UK"), "inner")
+
+# Join with Different Column Names
+result_custom = df1.join(df2.withColumnRenamed("id", "city_id"), df1["id"] == df2["city_id"], "inner")
+
+# Show the results
+print("Inner Join:")
+result_inner.show()
+
+print("Left Join:")
+result_left.show()
+
+print("Right Join:")
+result_right.show()
+
+print("Outer Join:")
+result_outer.show()
+
+print("Left S
