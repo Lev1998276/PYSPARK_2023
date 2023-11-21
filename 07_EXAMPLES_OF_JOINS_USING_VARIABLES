@@ -1,0 +1,33 @@
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col
+
+# Create a Spark session
+spark = SparkSession.builder.appName("JoinVariablesExample").getOrCreate()
+
+# Create three DataFrames
+data1 = [("Alice", 1, "USA"), ("Bob", 2, "UK"), ("Charlie", 3, "France")]
+columns1 = ["name", "id", "country"]
+df1 = spark.createDataFrame(data1, columns1)
+
+data2 = [("1", "New York"), ("2", "London"), ("3", "Paris")]
+columns2 = ["id", "city"]
+df2 = spark.createDataFrame(data2, columns2)
+
+data3 = [("1", "Basketball"), ("2", "Football"), ("3", "Soccer")]
+columns3 = ["id", "sport"]
+df3 = spark.createDataFrame(data3, columns3)
+
+# Define join conditions as variables
+join_condition1 = col("df1.id") == col("df2.id")
+join_condition2 = col("df1.id") == col("df3.id")
+
+# Perform join operations using variables
+result_join1 = df1.alias("df1").join(df2.alias("df2"), join_condition1, "inner")
+result_join2 = result_join1.alias("result_join1").join(df3.alias("df3"), join_condition2, "inner")
+
+# Show the results
+print("Result after the first join:")
+result_join1.show()
+
+print("Final Result after the second join:")
+result_join2.show()
