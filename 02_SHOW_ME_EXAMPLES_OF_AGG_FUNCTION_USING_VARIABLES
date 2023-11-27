@@ -24,3 +24,33 @@ min_salary_col = min(col("salary")).alias("min_salary")
 
 result_df = df.groupBy("department").agg(avg_salary_col, sum_salary_col,max_salary_col, min_salary_col )
 result_df.show()
+
+
+########################## EXAMPLE 2 ###############################33
+
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col, avg, count, min, max
+
+# Create a Spark session
+spark = SparkSession.builder.appName("AggregationExample").getOrCreate()
+
+# Create a DataFrame
+data = [("Alice", "Sales", 5000),
+        ("Bob", "Sales", 6000),
+        ("Charlie", "HR", 5500),
+        ("David", "Finance", 7000)]
+
+columns = ["Employee", "Department", "Salary"]
+df = spark.createDataFrame(data, columns)
+
+# Aggregated variables 
+avg_salary_col = avg(col("salary")).alias("avg_salary")
+total_count  = count("*").alias("total_count")
+min_sal = min(col("salary")).alias("min_salary")
+max_sal = max(col("salary")).alias("max_salary")
+
+# Aggregate the total salary by department
+result = df.groupBy("Department").agg(avg_salary_col, total_count,min_sal, max_sal )
+
+result.show()
+
